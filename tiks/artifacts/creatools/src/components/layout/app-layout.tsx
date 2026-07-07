@@ -54,7 +54,7 @@ const DEFAULT_SECTIONS: NavSectionConfig[] = [
     label: "PAINEL",
     items: [
       { id: "dashboard", label: "Dashboard",     href: "/",                icon: "LayoutDashboard", visible: true },
-      { id: "monitor",   label: "Conexão",        href: "/monitor/example", icon: "Activity",        matchPrefix: "/monitor", visible: true },
+      { id: "monitor",   label: "Conexão",        href: "/streamer/lookup", icon: "Activity",        matchPrefix: "/monitor", visible: true },
       {
         id: "overlays", label: "Sobreposições", href: "/overlays", icon: "Monitor", matchPrefix: "/overlays", visible: true,
         children: [

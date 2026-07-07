@@ -99,12 +99,9 @@ export default function StreamerWatchlist() {
     );
   }, [bulkCheck, notifEnabled]);
 
-  // Auto-refresh every 60s
+  // Manual-only refresh — automatic polling desabilitado para preservar quota tik.tools.
+  // O usuário deve clicar em "Atualizar" no topo da página.
   useEffect(() => {
-    if (watchlist.length > 0) {
-      refresh();
-      pollTimerRef.current = setInterval(refresh, 60_000);
-    }
     return () => { if (pollTimerRef.current) { clearInterval(pollTimerRef.current); pollTimerRef.current = null; } };
   }, []);
 

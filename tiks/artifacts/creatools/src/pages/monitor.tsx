@@ -652,7 +652,8 @@ export default function Monitor() {
     ws.onclose = () => {
       setConnStatus("disconnected");
       wsRef.current = null;
-      reconnectTimer.current = setTimeout(() => startConnection(activeUsernameRef.current), 5000);
+      // AUTO-RECONNECT DESABILITADO — usuário deve clicar em "Conectar" novamente.
+      // Isso evita que o app queime quota do tik.tools em loop se a conexão falhar.
     };
 
     ws.onerror = () => setConnStatus("error");
@@ -678,11 +679,14 @@ export default function Monitor() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // AUTO-CONNECT DESABILITADO para preservar quota do tik.tools.
+  // Usuário precisa clicar em "Conectar" no botão manualmente.
+  // Antes: qualquer visita a /monitor/:username disparava mintJwt + roomInfo automaticamente.
   useEffect(() => {
     if (activeUsername) {
       setEvents([]); setTotalDiamonds(0); setTotalLikes(0);
       setTopGifters([]); setViewerCount(null);
-      startConnection(activeUsername);
+      setConnStatus("idle");
     }
     return () => { disconnect(); };
   }, [activeUsername]);
@@ -812,8 +816,13 @@ export default function Monitor() {
                 <Clock className="w-3 h-3 inline mr-1" />{formatDuration(sessionDuration)}
               </span>
             )}
+            {connStatus === "idle" && (
+              <Button size="sm" onClick={() => startConnection(activeUsername)} data-testid="monitor-connect-btn">
+                <RefreshCw className="w-3 h-3 mr-1" />Conectar
+              </Button>
+            )}
             {(connStatus === "disconnected" || connStatus === "error") && (
-              <Button size="sm" variant="outline" onClick={() => startConnection(activeUsername)}>
+              <Button size="sm" variant="outline" onClick={() => startConnection(activeUsername)} data-testid="monitor-retry-btn">
                 <RefreshCw className="w-3 h-3 mr-1" />Retry
               </Button>
             )}

@@ -187,12 +187,8 @@ export default function Streamers() {
     );
   }, [watchlistBulk, notifEnabled]);
 
-  // Auto-refresh every 60s when on watchlist tab
+  // Manual-only refresh — automatic polling desabilitado para preservar quota tik.tools.
   useEffect(() => {
-    if (tab === "watchlist" && watchlist.length > 0) {
-      refreshWatchlist();
-      pollTimerRef.current = setInterval(refreshWatchlist, 60_000);
-    }
     return () => { if (pollTimerRef.current) { clearInterval(pollTimerRef.current); pollTimerRef.current = null; } };
   }, [tab]);
 

@@ -266,7 +266,7 @@ export default function Dashboard() {
             <p className="text-xs font-semibold uppercase tracking-widest text-purple-300/50 mb-4">Acesso Rápido</p>
             <div className="space-y-2">
               {[
-                { label: "Monitor Live",   icon: Wifi,     href: handle ? `/monitor/${handle}` : "/monitor/example", color: "#22d3ee" },
+                { label: "Monitor Live",   icon: Wifi,     href: handle ? `/monitor/${handle}` : "/streamer/lookup", color: "#22d3ee" },
                 { label: "Rankings",       icon: Crown,    href: "/leaderboards",  color: "#f97316" },
                 { label: "Gifters",        icon: Star,     href: "/gifters",       color: "#a78bfa" },
                 { label: "Live Analytics", icon: BarChart2, href: "/live-analytics", color: "#34d399" },

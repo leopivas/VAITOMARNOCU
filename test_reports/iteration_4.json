@@ -1,0 +1,46 @@
+{
+  "summary": "P0 tik.tools auto-call kill switch verified end-to-end. 60s idle on /dashboard after admin login produced ZERO calls to /api/tiktok/live-status, /api/tiktok/jwt, /api/tiktok/room-info, or /api/tiktok/check-alive. Adding a watchlist entry + navigating to /profile for 15s = 0 tik.tools calls. /monitor/mrbeast loads in 'Idle' state with visible Conectar button (data-testid=monitor-connect-btn); no jwt/room-info fires until user clicks Conectar (verified: click fires POST /api/tiktok/jwt + POST /api/tiktok/room-info as expected). Code inspection confirms ws.onclose in monitor.tsx L652 no longer schedules 5s reconnect and useEffect L685 no longer calls startConnection. Sidebar DEFAULT_SECTIONS in app-layout.tsx L57 has href='/streamer/lookup' for 'Conexão' item. Backend regression: 23/23 pytest tests PASSED.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Monitor page mount",
+        "issue": "Visiting /monitor/:username triggers exactly one GET /api/tiktok/gift-catalog (before user clicks Conectar). Not on the P0 blacklist (live-status/jwt/room-info/check-alive) but is a tik.tools-namespaced route — likely a cached static catalog. Verify server-side that this endpoint is cached and doesn't consume tik.tools quota. If it hits the upstream, add a client-side cache or lazy-load only after connect.",
+        "affected_selectors": []
+      }
+    ],
+    "design_issues": [
+      {
+        "screen": "Sidebar (admin user)",
+        "issues": [
+          "Admin's server-persisted ui-config sidebarSections OVERRIDES DEFAULT_SECTIONS. The visible sidebar has separate items 'Monitor' and 'Lookup' instead of the default 'Conexão' item, so the app-layout.tsx L57 href fix (to /streamer/lookup) is not observable via admin UI. Verified in code only. Regular / non-configured users will get the fix.",
+          "'INTELIGÊNCIA ARTIFICIAL' section with Assistente IA and Vídeos IA is NOT visible in the admin sidebar even after clearing localStorage. Root cause: admin's saved sidebarSections config does not include the ia-section. localStorage clearing does not help because this config comes from the backend ui-config, not localStorage. Main agent should either update the seeded/admin server config to include ia-section, or expose an admin editor to add it."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_ai_and_regression.py",
+    "/app/backend/tests/test_tiktok_and_plans.py",
+    "/app/test_reports/pytest/iter4_regression.xml"
+  ],
+  "action_items": [
+    "Update backend seed (or admin ui-config) so the persisted sidebarSections for admin@creatools.co include the 'ia-section' (Assistente IA, Vídeos IA) and use the new 'Conexão -> /streamer/lookup' item. Otherwise the DEFAULT_SECTIONS fix only benefits users without a saved custom sidebar.",
+    "Confirm /api/tiktok/gift-catalog is served from server cache and does NOT consume tik.tools quota on every /monitor/:username visit; if it does, defer the fetch until connect."
+  ],
+  "critical_code_review_comments": [
+    "watchlist-context.tsx: AUTO_POLL_ENABLED=false is correct, but the useEffect at L171-181 still runs the effect body on every mount (checkAll dependency). Consider removing the entire effect while polling is disabled to avoid dead code and confusion.",
+    "streamer-watchlist.tsx L54: pollTimerRef is declared but never assigned (only cleaned up). Can be removed together with the useRef import to keep intent explicit.",
+    "streamer-watchlist.tsx L138 & L255: Two user-facing strings still claim 'auto-refreshes every 60s' — misleading now that polling is disabled. Update copy to 'Manual refresh only'.",
+    "monitor.tsx: ws.onclose has no reconnect but also no user feedback beyond status='disconnected'. Consider a toast so user knows they need to click Conectar again."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "100% (23/23)", "frontend": "100% on P0 kill-switch flow" },
+  "test_credentials": "admin@creatools.co / admin123",
+  "seed_data_creation": "none (used localStorage.setItem for one-off watchlist entry, cleared before test)",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "P0 bug (tik.tools quota burn) confirmed FIXED at the network level via Playwright page.on('request'). Any future regression test should: (1) login, clear localStorage, idle 60s on /, count requests matching /api/tiktok/(live-status|jwt|room-info|check-alive) — must be 0. (2) visit /monitor/<any> and verify data-testid=monitor-connect-btn is visible without jwt/room-info firing. (3) click Conectar → both endpoints fire. Note the /api/tiktok/gift-catalog fetch on monitor mount is expected (server-cached static list).",
+  "rca of the issue": "Original bug: multiple useEffect intervals + WS auto-reconnect + watchlist context poll all called /api/tiktok/* every 60s regardless of user activity, burning tik.tools quota. Fix (verified): (a) watchlist-context AUTO_POLL_ENABLED=false short-circuits the polling useEffect; (b) streamer-watchlist.tsx and streamers.tsx removed their setInterval and only keep cleanup; (c) monitor.tsx removed the auto-start effect (now just resets state and shows 'Idle' status) and removed the ws.onclose 5s reconnect; (d) new Conectar button (data-testid=monitor-connect-btn) is the sole entry point that mints JWT + fetches room-info; (e) sidebar 'Conexão' + dashboard quick-action fallback now route to /streamer/lookup instead of /monitor/example. Remaining gap: admin's server-side sidebarSections config still needs to be updated to reflect the new IA section and Conexão target."
+}

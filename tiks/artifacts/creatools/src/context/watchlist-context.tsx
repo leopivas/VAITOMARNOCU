@@ -5,6 +5,9 @@ import { useToast } from "@/hooks/use-toast";
 
 const STORAGE_KEY = "creatools_watchlist";
 const EVENTS_KEY = "creatools_watch_events";
+// AUTO-POLLING DESABILITADO para preservar quota do tik.tools.
+// Watchlist só atualiza sob demanda (botão "Atualizar" nas páginas).
+const AUTO_POLL_ENABLED = false;
 const POLL_INTERVAL_MS = 60_000;
 const MAX_EVENTS = 100;
 
@@ -166,6 +169,7 @@ export function WatchlistProvider({ children }: { children: ReactNode }) {
   creatorsRef.current = creators;
 
   useEffect(() => {
+    if (!AUTO_POLL_ENABLED) return;  // auto-polling disabled to preserve tik.tools quota
     let cancelled = false;
     const run = async () => {
       if (cancelled) return;
