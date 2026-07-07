@@ -519,7 +519,7 @@ export default function Overlays() {
                 <li>Copie a URL do overlay abaixo</li>
                 <li>OBS/TikTok Studio: Sources → (+) → Browser Source</li>
                 <li>Cole a URL, defina 1080×1920 (vertical) ou 1920×1080 (horizontal)</li>
-                <li>Marque "Shutdown source when not visible"</li>
+                <li>Marque &quot;Shutdown source when not visible&quot;</li>
                 <li>Fundo é 100% transparente por padrão</li>
               </ol>
             </CardContent>

@@ -163,6 +163,5 @@ export function useOverlayDemo(
       if (statsTimer) clearInterval(statsTimer);
       clearInterval(eventTimer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [demoOn]);
 }
