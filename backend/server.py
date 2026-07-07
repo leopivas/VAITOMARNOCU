@@ -1,6 +1,14 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import StreamingResponse, PlainTextResponse
-import httpx, os, subprocess, atexit, time, signal, pathlib, logging
+import atexit
+import logging
+import os
+import pathlib
+import signal
+import subprocess
+import time
+
+import httpx
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("proxy")
@@ -41,8 +49,10 @@ def start_node():
 def stop_node():
     global node_proc
     if node_proc and node_proc.poll() is None:
-        try: os.killpg(os.getpgid(node_proc.pid), signal.SIGTERM)
-        except Exception: pass
+        try:
+            os.killpg(os.getpgid(node_proc.pid), signal.SIGTERM)
+        except Exception:
+            pass
 atexit.register(stop_node)
 
 @app.on_event("startup")
