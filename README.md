@@ -289,7 +289,7 @@ Siga na ordem exata:
 ### 🪜 Passo 1 — Clonar o repositório
 
 ```bash
-git clone https://github.com/leopivas/appvCOR.git /app
+git clone https://github.com/leopivas/APPFINALV3.git /app
 cd /app
 ```
 
@@ -543,7 +543,7 @@ Suba um servidor Ubuntu 22.04 (mínimo 2 vCPU / 4 GB RAM):
 
 ```bash
 # 1. Clonar repo
-git clone https://github.com/leopivas/appvCOR.git /app
+git clone https://github.com/leopivas/APPFINALV3.git /app
 
 # 2. Seguir passos 2-9 da seção "Instalação Passo a Passo"
 
@@ -694,4 +694,4 @@ pnpm run typecheck
 
 **Última atualização**: Julho 2025
 **Versão do documento**: 1.0.0
-**Repositório**: https://github.com/leopivas/appvCOR
+**Repositório**: https://github.com/leopivas/APPFINALV3

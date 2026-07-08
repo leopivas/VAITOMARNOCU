@@ -9,7 +9,7 @@ Este documento é o **guia express** para instalar o Creatools em um VPS/servido
 Em um servidor **Ubuntu 22.04+** ou **Debian 12+** recém-criado, rode como **root**:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/leopivas/appvCOR/main/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/leopivas/APPFINALV3/main/install.sh | sudo bash
 ```
 
 Ou, se já tiver o repositório clonado:
@@ -71,14 +71,14 @@ DB_PASSWORD=minha-senha-forte \
 NODE_VERSION=20 \
 BACKEND_PORT=8001 \
 FRONTEND_PORT=3000 \
-REPO_URL=https://github.com/leopivas/appvCOR.git \
+REPO_URL=https://github.com/leopivas/APPFINALV3.git \
 sudo bash install.sh
 ```
 
 | Variável | Padrão | Descrição |
 |---|---|---|
 | `APP_DIR` | `/opt/creatools` | Diretório onde o app será instalado |
-| `REPO_URL` | `https://github.com/leopivas/appvCOR.git` | URL do repositório Git |
+| `REPO_URL` | `https://github.com/leopivas/APPFINALV3.git` | URL do repositório Git |
 | `NODE_VERSION` | `20` | Versão do Node.js |
 | `DB_NAME` | `creatools` | Nome do banco PostgreSQL |
 | `DB_USER` | `creatools` | Usuário do PostgreSQL |
@@ -231,5 +231,5 @@ Testado em: DigitalOcean, Linode, Vultr, AWS EC2 (t3.small+), Hetzner Cloud.
 
 ## 📞 Suporte
 
-- Issues do app: https://github.com/leopivas/appvCOR/issues
+- Issues do app: https://github.com/leopivas/APPFINALV3/issues
 - Documentação completa: [README.md](./README.md)
