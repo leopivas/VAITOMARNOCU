@@ -1,1 +1,3 @@
-{"url":"postgres://creatools:qOAuMY97qEpdCxQCj9Jsh0Le@localhost:5432/creatools"}
+{
+  "url": "postgres://creatools:qOAuMY97qEpdCxQCj9Jsh0Le@localhost:5432/creatools"
+}
