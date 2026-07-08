@@ -1,3 +1,1 @@
-{
-  "url": "postgresql://neondb_owner:npg_i4bns1OCNqLo@ep-cool-mud-ad6bfh41-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-}
+{"url":"postgresql://neondb_owner:npg_i4bns1OCNqLo@ep-crimson-hill-ada8unpr-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
