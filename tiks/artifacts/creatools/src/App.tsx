@@ -82,20 +82,21 @@ import { useEffect } from "react";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Cache "fresh" for 30s — evita refetch imediato ao trocar de página
-      staleTime: 30_000,
-      // Mantém cache em memória por 15 min mesmo sem uso (usuário fora do site)
+      // Cache "fresh" por 5 min — não refetcha ao trocar de página nesse período
+      staleTime: 5 * 60_000,
+      // Mantém cache em memória por 15 min (mesmo com usuário fora do site)
       gcTime: 15 * 60_000,
-      // NÃO refetcha ao trocar aba/janela (só se stale)
+      // NÃO refetcha ao trocar aba/janela
       refetchOnWindowFocus: false,
-      // Só refetcha ao remontar se estiver stale
-      refetchOnMount: true,
+      // NÃO refetcha automaticamente ao remontar (usa cache se ainda fresh)
+      refetchOnMount: false,
+      // Só refetcha se reconectar do offline
       refetchOnReconnect: "always",
       retry: 1,
-      // Refetch silencioso em background a cada 60s (dados sempre atualizados)
-      refetchInterval: 60_000,
-      refetchIntervalInBackground: true,
-      // Mantém dados anteriores enquanto refetcha (sem "piscar")
+      // DESATIVADO — refetch em background era o que causava "recarregamento"
+      // Componentes que precisam de tempo real devem opt-in com refetchInterval na useQuery
+      refetchInterval: false,
+      // Mantém dados anteriores enquanto refetcha (sem "piscar" a tela)
       placeholderData: (previousData: unknown) => previousData,
     },
   },
