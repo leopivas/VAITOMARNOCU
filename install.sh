@@ -97,9 +97,15 @@ fi
 
 # ─── Passo 3: pnpm + yarn ──────────────────────────────────────────────────
 step "3/9 Instalando pnpm e yarn"
-npm install -g corepack pnpm@9.15.9 yarn --silent 2>&1 | tail -3 || warn "Aviso na instalação de pnpm/yarn"
-corepack enable 2>/dev/null || true
-ok "pnpm $(pnpm --version 2>/dev/null || echo '?') e yarn $(yarn --version 2>/dev/null || echo '?') prontos"
+# Instala pnpm diretamente via npm (mais confiável que corepack em fresh installs)
+npm install -g pnpm@9.15.9 yarn 2>&1 | tail -5 || fatal "npm install de pnpm/yarn falhou"
+# Garante que o PATH tem os globais do npm
+export PATH="$(npm config get prefix 2>/dev/null)/bin:$PATH"
+hash -r 2>/dev/null || true
+PNPM_VER="$(pnpm --version 2>/dev/null || echo '?')"
+YARN_VER="$(yarn --version 2>/dev/null || echo '?')"
+[[ "$PNPM_VER" == "?" ]] && fatal "pnpm não ficou disponível no PATH após instalação"
+ok "pnpm $PNPM_VER e yarn $YARN_VER prontos"
 
 # ─── Passo 4: PostgreSQL — criar banco + usuário ───────────────────────────
 step "4/9 Configurando PostgreSQL"
@@ -147,8 +153,12 @@ python3 -m venv /root/.venv-creatools 2>/dev/null || true
 # shellcheck disable=SC1091
 source /root/.venv-creatools/bin/activate
 pip install --upgrade pip --quiet
-pip install -r "$APP_DIR/backend/requirements.txt" --quiet
-pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/ --quiet 2>&1 | tail -3 || warn "emergentintegrations opcional falhou"
+
+# emergentintegrations é um pacote privado hospedado no CloudFront (não no PyPI).
+# O flag --extra-index-url precisa estar presente para conseguir baixá-lo.
+EMERGENT_INDEX="https://d33sy5i8bnduwe.cloudfront.net/simple/"
+pip install -r "$APP_DIR/backend/requirements.txt" --quiet --extra-index-url "$EMERGENT_INDEX" \
+  || fatal "pip install falhou — veja o erro acima"
 deactivate
 ok "Dependências Python instaladas em /root/.venv-creatools"
 
