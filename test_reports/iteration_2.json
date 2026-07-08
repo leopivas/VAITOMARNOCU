@@ -23,5 +23,5 @@
   "seed_data_creation": "none",
   "retest_needed": false,
   "main_agent_can_self_test": true,
-  "context_for_next_testing_agent": "Node backend at 127.0.0.1:8081 fronted by FastAPI at 8001 → public preview https://livestream-control-2.preview.emergentagent.com. Overlay Studio backend route is /api/layouts (NOT /api/overlays). Admin plans management is under /admin → sidebar 'Painel Admin' → 'Planos' (2nd occurrence of 'Planos' text). TikTok verify uses TikTok public oEmbed as primary source — works for real handles (mrbeast/charlidamelio/khaby.lame) returning nickname/avatar/followerCount. Admin user already has tiktokUsername='lariisimoesb' set from prior test; PATCH /api/auth/profile has weekly change limit."
+  "context_for_next_testing_agent": "Node backend at 127.0.0.1:8081 fronted by FastAPI at 8001 → public preview https://auto-install-app.preview.emergentagent.com. Overlay Studio backend route is /api/layouts (NOT /api/overlays). Admin plans management is under /admin → sidebar 'Painel Admin' → 'Planos' (2nd occurrence of 'Planos' text). TikTok verify uses TikTok public oEmbed as primary source — works for real handles (mrbeast/charlidamelio/khaby.lame) returning nickname/avatar/followerCount. Admin user already has tiktokUsername='lariisimoesb' set from prior test; PATCH /api/auth/profile has weekly change limit."
 }

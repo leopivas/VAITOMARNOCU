@@ -8,7 +8,7 @@ import os
 import pytest
 import requests
 
-BASE_URL = "https://livestream-control-2.preview.emergentagent.com"
+BASE_URL = "https://auto-install-app.preview.emergentagent.com"
 ADMIN_EMAIL = "admin@creatools.co"
 ADMIN_PASSWORD = "admin123"
 

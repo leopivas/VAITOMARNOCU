@@ -3,7 +3,7 @@ import os
 import json
 import requests
 
-BASE = "https://livestream-control-2.preview.emergentagent.com"
+BASE = "https://auto-install-app.preview.emergentagent.com"
 
 
 def _login():
