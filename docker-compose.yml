@@ -1,0 +1,103 @@
+# ============================================================================
+#  Creatools — Docker Compose
+#  --------------------------------------------------------------------------
+#  Sobe toda a stack (backend Node + frontend build + nginx reverse-proxy)
+#  usando Neon PostgreSQL EXTERNO (você configura via env vars abaixo).
+#
+#  Uso:
+#    1. Copie .env.example para .env e preencha DATABASE_URL, JWT_SECRET etc.
+#    2. docker compose up -d --build
+#    3. Acesse http://localhost/installer para completar o setup
+#
+#  Opcional: descomente o serviço 'postgres' para usar PostgreSQL local
+#           em vez do Neon (útil pra dev).
+# ============================================================================
+version: "3.9"
+
+services:
+  # ─── Backend Node (Express 5 + api-server compilado) ────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    image: creatools/backend:latest
+    container_name: creatools-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: info
+      PORT: 8001
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      EMERGENT_LLM_KEY: ${EMERGENT_LLM_KEY:-}
+      TIKTOOLS_API_KEY: ${TIKTOOLS_API_KEY:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      TIKTOK_CLIENT_KEY: ${TIKTOK_CLIENT_KEY:-}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
+      TIKTOK_REDIRECT_URI: ${TIKTOK_REDIRECT_URI:-}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      PUBLIC_OBJECT_SEARCH_PATHS: ${PUBLIC_OBJECT_SEARCH_PATHS:-/public}
+      PRIVATE_OBJECT_DIR: ${PRIVATE_OBJECT_DIR:-/private}
+    volumes:
+      # Persiste config (auth-config.json, db-config.json, .installed lock)
+      - backend_data:/app/artifacts/api-server/data
+    expose:
+      - "8001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8001/api/setup/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ─── Frontend (Vite build servido por Nginx) ────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-http://localhost}
+    image: creatools/frontend:latest
+    container_name: creatools-frontend
+    restart: unless-stopped
+    expose:
+      - "3000"
+
+  # ─── Nginx Reverse Proxy (porta 80 → front + /api → back) ───────────────
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: creatools-nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "${HOST_PORT:-80}:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  # ─── (Opcional) PostgreSQL local — descomente se NÃO usar Neon ──────────
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: creatools-postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: creatools
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+  #     POSTGRES_DB: creatools
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   expose:
+  #     - "5432"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U creatools"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 5
+
+volumes:
+  backend_data:
+    driver: local
+  # postgres_data:
+  #   driver: local
